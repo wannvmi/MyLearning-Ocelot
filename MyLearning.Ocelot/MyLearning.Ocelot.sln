@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Api", "Demo.Api\Demo.Api.csproj", "{61EA5D47-8506-4751-98B4-254F1E460FDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.Api", "Demo.Api\Demo.Api.csproj", "{61EA5D47-8506-4751-98B4-254F1E460FDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Web", "Demo.Web\Demo.Web.csproj", "{CEF9E2FC-24DC-463C-B7FF-1A88CACDEFD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.Web", "Demo.Web\Demo.Web.csproj", "{CEF9E2FC-24DC-463C-B7FF-1A88CACDEFD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Ocelot", "Demo.Ocelot\Demo.Ocelot.csproj", "{A89477C2-3751-4418-8BEB-DFBEE2000F4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{CEF9E2FC-24DC-463C-B7FF-1A88CACDEFD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEF9E2FC-24DC-463C-B7FF-1A88CACDEFD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEF9E2FC-24DC-463C-B7FF-1A88CACDEFD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A89477C2-3751-4418-8BEB-DFBEE2000F4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A89477C2-3751-4418-8BEB-DFBEE2000F4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A89477C2-3751-4418-8BEB-DFBEE2000F4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A89477C2-3751-4418-8BEB-DFBEE2000F4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
