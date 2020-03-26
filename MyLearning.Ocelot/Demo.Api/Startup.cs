@@ -16,12 +16,14 @@ namespace Demo.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
+        public IHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -31,16 +33,34 @@ namespace Demo.Api
             services.AddControllers();
 
             #region Cors
-            services.AddCors(options =>
+
+            if (!Environment.IsProduction())
             {
-                options.AddDefaultPolicy(
-                    builder =>
-                    {
-                        builder.WithOrigins("https://localhost:1000")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
-            });
+                services.AddCors(options =>
+                {
+                    options.AddDefaultPolicy(
+                        builder =>
+                        {
+                            builder.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                        });
+                });
+            }
+            else
+            {
+                services.AddCors(options =>
+                {
+                    options.AddDefaultPolicy(
+                        builder =>
+                        {
+                            builder.WithOrigins("https://localhost:1000")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                        });
+                });
+            }
+
             #endregion
         }
 
@@ -52,13 +72,13 @@ namespace Demo.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseCors();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthorization();
-
-            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {

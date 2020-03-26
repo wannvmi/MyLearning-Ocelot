@@ -2,7 +2,8 @@
   "ReRoutes": [
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamPathTemplate": "/",
+      "ReRouteIsCaseSensitive": false,
+      "DownstreamPathTemplate": "/{url}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -10,12 +11,17 @@
           "Port": 5000
         }
       ],
-      "UpstreamPathTemplate": "/api1/",
+      "UpstreamPathTemplate": "/api1/{url}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
+      //"ServiceName": "api1",
+      //"LoadBalancerOptions": {
+      //  "Type": "LeastConnection"
+      //}
     },
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamPathTemplate": "/",
+      "ReRouteIsCaseSensitive": false,
+      "DownstreamPathTemplate": "/{url}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -23,11 +29,21 @@
           "Port": 5010
         }
       ],
-      "UpstreamPathTemplate": "/web1/",
+      "UpstreamPathTemplate": "/web1/{url}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
+      //"ServiceName": "web1",
+      //"LoadBalancerOptions": {
+      //  "Type": "LeastConnection"
+      //}
     }
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:1000"
-  }
+  },
+  //"ServiceDiscoveryProvider": {
+  //  "Host": "http://106.12.22.155/",
+  //  "Port": 8500,
+  //  "Type": "PollConsul",
+  //  "PollingInterval": 100
+  //}
 }
