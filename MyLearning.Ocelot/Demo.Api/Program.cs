@@ -21,6 +21,7 @@ namespace Demo.Api
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseUrls("https://*:5000");
                 });
     }
 }

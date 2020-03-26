@@ -21,6 +21,7 @@ namespace Demo.Web
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseUrls("https://*:5010");
                 });
     }
 }
