@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Demo.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,6 +31,14 @@ namespace Demo.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHealthChecks();
+
+            services.AddDbContext<DemoDbContext>(options =>
+            {
+#if DEBUG
+                options.EnableSensitiveDataLogging(true);
+#endif
+                options.UseMySql(Configuration.GetConnectionString("DBConnection"));
+            });
 
             services.AddControllers();
 
