@@ -15,6 +15,7 @@ namespace Demo.IdentityServer
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseUrls("https://*:5050");
                 });
     }
 }

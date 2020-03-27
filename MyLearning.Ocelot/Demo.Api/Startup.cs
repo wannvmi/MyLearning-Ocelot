@@ -82,6 +82,7 @@ namespace Demo.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UsePathBase("/api1");
             app.UseCors();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

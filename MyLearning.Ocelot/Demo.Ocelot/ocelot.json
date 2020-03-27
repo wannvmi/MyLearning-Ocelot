@@ -3,7 +3,25 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "ReRouteIsCaseSensitive": false,
-      "DownstreamPathTemplate": "/{url}",
+      "DownstreamPathTemplate": "/ids/{url}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "127.0.0.1",
+          "Port": 5050
+        }
+      ],
+      "UpstreamPathTemplate": "/ids/{url}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ]
+      //"ServiceName": "api1",
+      //"LoadBalancerOptions": {
+      //  "Type": "LeastConnection"
+      //}
+    },
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "ReRouteIsCaseSensitive": false,
+      "DownstreamPathTemplate": "/api1/{url}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -21,7 +39,7 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "ReRouteIsCaseSensitive": false,
-      "DownstreamPathTemplate": "/{url}",
+      "DownstreamPathTemplate": "/web1/{url}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
