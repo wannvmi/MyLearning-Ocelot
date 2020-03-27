@@ -44,11 +44,13 @@ namespace Demo.IdentityServer
 
             services.AddControllersWithViews();
 
+            services.AddScoped<UserStore>();
+
             var builder = services.AddIdentityServer()
                 .AddInMemoryIdentityResources(Config.Ids)
                 .AddInMemoryApiResources(Config.Apis)
                 .AddInMemoryClients(Config.Clients)
-                .AddTestUsers(TestUsers.Users);
+                .AddProfileService<CustomProfileService>();
 
             builder.AddDeveloperSigningCredential();
 

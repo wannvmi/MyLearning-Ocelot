@@ -34,6 +34,11 @@ namespace Demo.Core.Entities
         public DateTime CreateTime { get; set; } = DateTime.Now;
 
         /// <summary>
+        /// Gets or sets if the user is active.
+        /// </summary>
+        public bool IsActive { get; set; } = true;
+
+        /// <summary>
         /// 是否删除 0：未删除 1:删除
         /// </summary>
         public int IsDelete { get; set; } = 0;

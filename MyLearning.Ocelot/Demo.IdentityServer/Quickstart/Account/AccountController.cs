@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Demo.IdentityServer;
 
 namespace IdentityServer
 {
@@ -28,7 +29,7 @@ namespace IdentityServer
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly TestUserStore _users;
+        private readonly UserStore _users;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
@@ -39,11 +40,11 @@ namespace IdentityServer
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
-            TestUserStore users = null)
+            UserStore users)
         {
             // if the TestUserStore is not in DI, then we'll just use the global users collection
             // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-            _users = users ?? new TestUserStore(TestUsers.Users);
+            _users = users;
 
             _interaction = interaction;
             _clientStore = clientStore;
@@ -112,7 +113,7 @@ namespace IdentityServer
                 if (_users.ValidateCredentials(model.Username, model.Password))
                 {
                     var user = _users.FindByUsername(model.Username);
-                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username, clientId: context?.ClientId));
+                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.Id, user.Username, clientId: context?.ClientId));
 
                     // only set explicit expiration here if user chooses "remember me". 
                     // otherwise we rely upon expiration configured in cookie middleware.
@@ -127,7 +128,7 @@ namespace IdentityServer
                     };
 
                     // issue authentication cookie with subject ID and username
-                    await HttpContext.SignInAsync(user.SubjectId, user.Username, props);
+                    await HttpContext.SignInAsync(user.Id, user.Username, props);
 
                     if (context != null)
                     {
@@ -158,7 +159,7 @@ namespace IdentityServer
                     }
                 }
 
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId:context?.ClientId));
+                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId: context?.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
@@ -167,7 +168,7 @@ namespace IdentityServer
             return View(vm);
         }
 
-        
+
         /// <summary>
         /// Show logout page
         /// </summary>

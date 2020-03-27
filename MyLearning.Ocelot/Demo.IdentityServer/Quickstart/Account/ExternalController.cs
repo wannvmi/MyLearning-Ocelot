@@ -14,6 +14,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using Demo.Core.Entities;
+using Demo.IdentityServer;
 
 namespace IdentityServer
 {
@@ -21,7 +23,7 @@ namespace IdentityServer
     [AllowAnonymous]
     public class ExternalController : Controller
     {
-        private readonly TestUserStore _users;
+        private readonly UserStore _users;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly ILogger<ExternalController> _logger;
@@ -32,11 +34,11 @@ namespace IdentityServer
             IClientStore clientStore,
             IEventService events,
             ILogger<ExternalController> logger,
-            TestUserStore users = null)
+            UserStore users )
         {
             // if the TestUserStore is not in DI, then we'll just use the global users collection
             // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-            _users = users ?? new TestUserStore(TestUsers.Users);
+            _users = users;
 
             _interaction = interaction;
             _clientStore = clientStore;
@@ -120,7 +122,7 @@ namespace IdentityServer
             ProcessLoginCallbackForSaml2p(result, additionalLocalClaims, localSignInProps);
 
             // issue authentication cookie for user
-            await HttpContext.SignInAsync(user.SubjectId, user.Username, provider, localSignInProps, additionalLocalClaims.ToArray());
+            await HttpContext.SignInAsync(user.Id, user.Username, provider, localSignInProps, additionalLocalClaims.ToArray());
 
             // delete temporary cookie used during external authentication
             await HttpContext.SignOutAsync(IdentityServer4.IdentityServerConstants.ExternalCookieAuthenticationScheme);
@@ -130,7 +132,7 @@ namespace IdentityServer
 
             // check if external login is in the context of an OIDC request
             var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.SubjectId, user.Username, true, context?.ClientId));
+            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.Id, user.Username, true, context?.ClientId));
 
             if (context != null)
             {
@@ -192,7 +194,7 @@ namespace IdentityServer
             }
         }
 
-        private (TestUser user, string provider, string providerUserId, IEnumerable<Claim> claims) FindUserFromExternalProvider(AuthenticateResult result)
+        private (User user, string provider, string providerUserId, IEnumerable<Claim> claims) FindUserFromExternalProvider(AuthenticateResult result)
         {
             var externalUser = result.Principal;
 
@@ -216,7 +218,7 @@ namespace IdentityServer
             return (user, provider, providerUserId, claims);
         }
 
-        private TestUser AutoProvisionUser(string provider, string providerUserId, IEnumerable<Claim> claims)
+        private User AutoProvisionUser(string provider, string providerUserId, IEnumerable<Claim> claims)
         {
             var user = _users.AutoProvisionUser(provider, providerUserId, claims.ToList());
             return user;
