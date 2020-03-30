@@ -14,6 +14,8 @@ namespace Demo.Data
 
         public DbSet<User> User { get; set; }
 
+        public DbSet<Store> Store { get; set; }
+
 
 #if DEBUG
         public static readonly ILoggerFactory MyLoggerFactory

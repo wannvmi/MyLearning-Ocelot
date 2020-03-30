@@ -3,6 +3,7 @@
     "Demo.Web": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "web1",
       "applicationUrl": "https://localhost:5010",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

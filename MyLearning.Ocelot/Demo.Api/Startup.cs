@@ -1,20 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using Demo.Core.Handle;
 using Demo.Data;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace Demo.Api
@@ -43,7 +40,23 @@ namespace Demo.Api
                 options.UseMySql(Configuration.GetConnectionString("DBConnection"));
             });
 
-            services.AddControllers();
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = "https://demo.identityserver.io";
+                    options.ApiName = "api1";
+                });
+
+            services.AddTransient<ExceptionFilter>();
+
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(new ModelActionFilter());
+                //options.Filters.AddService<ExceptionFilter>();
+                options.MaxModelValidationErrors = 50;
+                options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
+                    _ => "该字段不可为空。");
+            });
             services.AddRouting(options =>
             {
                 options.LowercaseUrls = true;
@@ -104,10 +117,9 @@ namespace Demo.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UsePathBase("/api1");
+
+            app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
             #region Swagger
             //启用中间件服务生成Swagger作为JSON终结点
@@ -122,7 +134,6 @@ namespace Demo.Api
             });
             #endregion
 
-            app.UsePathBase("/api1");
             app.UseCors();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

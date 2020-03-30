@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -38,6 +39,15 @@ namespace Demo.Ocelot
 
             services.AddControllersWithViews();
 
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = "https://whereyouridentityserverlives.com";
+                    options.ApiName = "api";
+                    options.SupportedTokens = SupportedTokens.Both;
+                    options.ApiSecret = "secret";
+                });
+
             services.AddOcelot(Configuration);
             //.AddConsul();
 
@@ -52,8 +62,6 @@ namespace Demo.Ocelot
                 });
 
                 // 设置SWAGER JSON和UI的注释路径。
-                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Demo.Core.xml"));
-                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Demo.Data.xml"));
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 
                 // enable swagger Annotations
