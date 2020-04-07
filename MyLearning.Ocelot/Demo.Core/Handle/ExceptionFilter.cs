@@ -29,7 +29,7 @@ namespace Demo
             if (context.Exception is ResultException == false)
                 _logger.LogError(1, context.Exception, context.Exception.Message);
 
-            context.Result = new JsonResult(Result.FromCode(ResultCode.Fail, context.Exception.Message));
+            context.Result = new JsonResult(Result<object>.FromCode(ResultCode.Fail, context.Exception.Message));
 
             context.HttpContext.Response.StatusCode = HttpStatusCode.InternalServerError.GetHashCode();
             context.ExceptionHandled = true;

@@ -1,96 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Demo
+﻿namespace Demo
 {
-    public class Result : IResult
+    public class Result<T> where T : class, new()
     {
         public ResultCode code { get; set; }
 
-        public string message { get; set; }
+        public string msg { get; set; }
 
-        /// <summary>
-        /// 返回结果
-        /// </summary>
-        /// <param name="code">状态码</param>
-        /// <param name="message">提示信息</param>
-        public Result(ResultCode code, string message = null)
+        public T data { get; set; }
+
+        public Result(T data)
+        {
+            code = ResultCode.Ok;
+            msg = ResultCode.Ok.GetDescription();
+            this.data = data;
+        }
+
+        public Result(ResultCode code, string msg, T data)
         {
             this.code = code;
-            this.message = message ?? code.GetDescription();
-        }
-
-        /// <summary>
-        /// 返回指定 Code
-        /// </summary>
-        public static Result FromCode(ResultCode code, string message = null)
-        {
-            return new Result(code, message);
-        }
-
-        /// <summary>
-        /// 返回指定 Code
-        /// </summary>
-        public static Result<TType> FromCode<TType>(ResultCode code, TType data, string message = null) where TType : class, new()
-        {
-            return new Result<TType>(code, data, message);
-        }
-
-        /// <summary>
-        /// 返回错误信息
-        /// </summary>
-        public static Result FromError(string message, ResultCode code = ResultCode.Fail)
-        {
-            return new Result(code, message);
-        }
-
-        /// <summary>
-        /// 返回错误信息
-        /// </summary>
-        public static Result<TType> FromError<TType>(string message, ResultCode code = ResultCode.Fail) where TType : class, new()
-        {
-            return new Result<TType>(code, new TType(), message);
-        }
-
-        /// <summary>
-        /// 返回成功
-        /// </summary>
-        public static Result Ok(string message = null)
-        {
-            return FromCode(ResultCode.Ok, message);
-        }
-
-        /// <summary>
-        /// 返回成功
-        /// </summary>
-        public static Result<TType> Ok<TType>(TType data = default(TType), string message = null) where TType : class, new()
-        {
-            return FromCode(ResultCode.Ok, data, message);
-        }
-
-    }
-
-    public class Result<TType> : Result, IResult<TType> where TType : class, new()
-    {
-        public TType data { get; set; }
-
-        /// <summary>
-        /// 返回结果
-        /// </summary>
-        public Result(TType data)
-            : base(ResultCode.Ok)
-        {
+            this.msg = msg ?? code.GetDescription();
             this.data = data;
         }
 
-        /// <summary>
-        /// 返回结果
-        /// </summary>
-        public Result(ResultCode code, TType data, string message = null)
-            : base(code, message)
+        public static Result<T> FromCode(ResultCode code, string msg = null, T data = default)
         {
-            this.data = data;
+            if(data == null)
+                data = new T();
+            return new Result<T>(code, msg, data);
+        }
+
+        public static Result<T> Ok(T data)
+        {
+            return new Result<T>(data);
+        }
+
+        public static Result<T> FromError(ResultCode code = ResultCode.Fail, string msg = null, T data = default)
+        {
+            return new Result<T>(code, msg, data);
         }
     }
 }

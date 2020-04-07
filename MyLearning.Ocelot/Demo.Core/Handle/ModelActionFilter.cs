@@ -30,7 +30,7 @@ namespace Demo
                     }
                     errorResults.Add(result);
                 }
-                context.Result = new JsonResult(Result<List<ErrorResultDto>>.FromCode(ResultCode.InvalidData, errorResults));
+                context.Result = new JsonResult(Result<List<ErrorResultDto>>.FromCode(ResultCode.InvalidData, data: errorResults));
             }
         }
     }

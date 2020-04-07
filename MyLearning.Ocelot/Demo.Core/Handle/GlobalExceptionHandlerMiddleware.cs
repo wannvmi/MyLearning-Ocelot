@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Demo.Core.ActionResult;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -33,7 +32,7 @@ namespace Demo.Core.Handle
                     logger.LogError(1, ex, ex.Message);
                 }
 
-                var json = new ErrorResult { errcode = ResultCode.Fail, errmessage = ex.Message };
+                var json = Result<object>.FromCode(ResultCode.Fail, ex.Message);
                 var error = JsonConvert.SerializeObject(json);
 
                 await context.Response.WriteAsync(error);
