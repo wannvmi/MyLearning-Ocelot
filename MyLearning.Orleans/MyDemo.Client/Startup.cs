@@ -1,20 +1,21 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using Demo.Core.Handle;
-using Demo.Data;
-using IdentityServer4.AccessTokenValidation;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using MyDemo.Core.Handle;
 
-namespace Demo.Api
+namespace MyDemo.Client
 {
     public class Startup
     {
@@ -28,34 +29,29 @@ namespace Demo.Api
         public IHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHealthChecks();
 
-            services.AddDbContext<DemoDbContext>(options =>
-            {
-#if DEBUG
-                options.EnableSensitiveDataLogging(true);
-#endif
-                options.UseMySql(Configuration.GetConnectionString("DBConnection"));
-            });
-
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
-                {
-                    options.Authority = "https://demo.identityserver.io";
-                    options.ApiName = "api1";
-                });
-
-            services.AddTransient<ExceptionFilter>();
-
             services.AddControllers(options =>
             {
                 options.Filters.Add(new ModelActionFilter());
-                //options.Filters.AddService<ExceptionFilter>();
                 options.MaxModelValidationErrors = 50;
                 options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
                     _ => "该字段不可为空。");
+            }).AddJsonOptions(options =>
+            {
+                //设置时间格式
+                options.JsonSerializerOptions.Converters.Add(new DateTimeJsonConverter("yyyy-MM-dd HH:mm:ss"));
+                //设置bool获取格式
+                options.JsonSerializerOptions.Converters.Add(new BoolJsonConverter());
+                ////使用驼峰样式的key
+                //options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                ////使用驼峰样式的key
+                //options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+                //获取或设置要在转义字符串时使用的编码器
+                options.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
             });
             services.AddRouting(options =>
             {
@@ -99,13 +95,13 @@ namespace Demo.Api
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "MyDemo.API",
+                    Title = "MyDemo.MyDemo.API",
                     Version = "v1",
                 });
 
                 // 设置SWAGER JSON和UI的注释路径。
-                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Demo.Core.xml"));
-                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Demo.Data.xml"));
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "MyDemo.Core.xml"));
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "MyDemo.Data.xml"));
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 
                 // enable swagger Annotations
@@ -117,8 +113,6 @@ namespace Demo.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UsePathBase("/api1");
-
             app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
             #region Swagger
@@ -135,7 +129,6 @@ namespace Demo.Api
             #endregion
 
             app.UseCors();
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
