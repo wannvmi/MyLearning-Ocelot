@@ -32,6 +32,21 @@ namespace MyDemo.Client
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            //#region Orleans
+            //services.AddSingleton<ClusterClientHostedService>();
+            //services.AddSingleton<IHostedService>(_ => _.GetService<ClusterClientHostedService>());
+            //services.AddSingleton(_ => _.GetService<ClusterClientHostedService>().Client);
+
+            //services.AddHostedService<HelloWorldClientHostedService>();
+
+            //services.Configure<ConsoleLifetimeOptions>(options =>
+            //{
+            //    options.SuppressStatusMessages = true;
+            //});
+
+            //#endregion
+
+
             services.AddHealthChecks();
 
             services.AddControllers(options =>
