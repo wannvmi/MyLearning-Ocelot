@@ -1,6 +1,8 @@
-﻿namespace MyDemo.Core
+﻿using System;
+
+namespace MyDemo.Core
 {
-    public class Result<T> where T : class, new()
+    public class Result<T> where T : class
     {
         public ResultCode code { get; set; }
 
@@ -25,7 +27,7 @@
         public static Result<T> FromCode(ResultCode code, string msg = null, T data = default)
         {
             if (data == null)
-                data = new T();
+                data = (T) new Object();
             return new Result<T>(code, msg, data);
         }
 

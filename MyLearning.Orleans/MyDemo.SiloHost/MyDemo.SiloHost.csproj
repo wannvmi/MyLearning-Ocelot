@@ -18,4 +18,8 @@
     <ProjectReference Include="..\MyDemo.Interfaces\MyDemo.Interfaces.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 </Project>

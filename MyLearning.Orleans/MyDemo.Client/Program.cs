@@ -19,31 +19,11 @@ namespace MyDemo.Client
             CreateHostBuilder(args).Build().Run();
         }
 
-        //public static IHostBuilder CreateHostBuilder(string[] args) =>
-        //    Host.CreateDefaultBuilder(args)
-        //        .ConfigureWebHostDefaults(webBuilder =>
-        //        {
-        //            webBuilder.UseStartup<Startup>();
-        //        });
-
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureServices(services =>
+                .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    services.AddSingleton<ClusterClientHostedService>();
-                    services.AddSingleton<IHostedService>(_ => _.GetService<ClusterClientHostedService>());
-                    services.AddSingleton(_ => _.GetService<ClusterClientHostedService>().Client);
-
-                    services.AddHostedService<HelloWorldClientHostedService>();
-
-                    services.Configure<ConsoleLifetimeOptions>(options =>
-                    {
-                        options.SuppressStatusMessages = true;
-                    });
-                })
-                .ConfigureLogging(builder =>
-                {
-                    builder.AddConsole();
+                    webBuilder.UseStartup<Startup>();
                 });
 
     }
