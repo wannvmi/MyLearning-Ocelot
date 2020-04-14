@@ -36,9 +36,9 @@ namespace MyDemo.Core
             return new Result<T>(data);
         }
 
-        public static Result<T> FromError(ResultCode code = ResultCode.Fail, string msg = null, T data = default)
+        public static Result<T> FromError(string msg = null, T data = default)
         {
-            return new Result<T>(code, msg, data);
+            return new Result<T>(ResultCode.Fail, msg, data);
         }
     }
 }
